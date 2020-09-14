@@ -7,3 +7,6 @@
 [submodule "cdn-rust"]
 	path = cdn-rust
 	url = https://github.com/ZSBRybnik/cdn-rust
+[submodule "cdn-go"]
+	path = cdn-go
+	url = https://github.com/ZSBRybnik/cdn-go
