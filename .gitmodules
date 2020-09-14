@@ -1,3 +1,6 @@
 [submodule "website"]
 	path = website
 	url = https://github.com/ZSBRybnik/website
+[submodule "server-go"]
+	path = server-go
+	url = https://github.com/ZSBRybnik/server-go
