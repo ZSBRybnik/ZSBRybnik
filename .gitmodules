@@ -4,3 +4,6 @@
 [submodule "server-go"]
 	path = server-go
 	url = https://github.com/ZSBRybnik/server-go
+[submodule "cdn-rust"]
+	path = cdn-rust
+	url = https://github.com/ZSBRybnik/cdn-rust
