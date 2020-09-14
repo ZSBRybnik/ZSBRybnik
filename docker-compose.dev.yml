@@ -1,0 +1,105 @@
+version: "3.7"
+services:
+  zsbwebsite:
+    container_name: zsbwebsite
+    build: 
+      context: ./website
+      dockerfile: ./Dockerfile.dev
+    tty: true
+    ports:
+      - "3000:3000"
+    networks:
+      - fullstack
+    restart: on-failure
+    volumes:
+      - ./website:/website
+    depends_on:
+      - zsbserver
+      #  - zsbcdngo
+      - zsbcdnrust
+  zsbserver:
+    container_name: zsbserver
+    build: ./server-go
+    ports:
+      - "5001:5001"
+    depends_on:
+      - zsbdatabase
+      - zsbredis
+    networks:
+      - fullstack
+    restart: on-failure
+  zsbdatabase:
+    container_name: zsbdatabase
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_USER: "mysql"
+      MYSQL_PASSWORD: "root"
+      MYSQL_ROOT_PASSWORD: "root"
+    networks:
+      - fullstack
+    restart: on-failure
+  zsbphpmyadmin:
+    container_name: zsbphpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - "4000:80"
+    networks:
+      - fullstack
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_USER: "mysql"
+      MYSQL_PASSWORD: "root"
+      PMA_HOST: "host.docker.internal"
+    restart: on-failure
+    depends_on:
+      - zsbdatabase
+  zsbredis:
+    container_name: zsbredis
+    image: redis:latest
+    restart: on-failure
+    networks:
+      - fullstack
+    expose:
+      - "6379"
+    ports:
+      - "6379:6379"
+  # zsbcdngo:
+  #  container_name: zsbcdngo
+  #  build: ./cdn-go
+  #  ports:
+  #    - "5002:5002"
+  #  networks:
+  #    - fullstack
+  #  restart: on-failure
+  #  depends_on:
+  #    - zsbftp
+  zsbcdnrust:
+    container_name: zsbcdnrust
+    build: 
+      context: .
+      dockerfile: ./cdn-rust/Dockerfile
+    ports:
+      - "5002:5002"
+    networks:
+      - fullstack
+    restart: on-failure
+    depends_on:
+      - zsbftp
+    volumes:
+      - ./public:/public
+  zsbftp:
+    container_name: zsbftp
+    image: vimagick/vsftpd:latest
+    ports:
+      - "20:20"
+      - "21:21"
+      - "30000-30010:30000-30010"
+    networks:
+      - fullstack
+    restart: on-failure
+
+networks:
+  fullstack:
+    driver: bridge

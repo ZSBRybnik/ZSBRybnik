@@ -1,0 +1,114 @@
+version: "3.7"
+services:
+  zsbwebsite:
+    image: ${DOCKERHUB_USERNAME}/zsbwebsite:latest
+    build:
+      context: ./website
+      dockerfile: ./Dockerfile
+    ports:
+      - "5000:5000"
+    networks:
+      - fullstack
+    restart: on-failure
+    environment:
+      - REACT_APP_CDN_URL=${REACT_APP_CDN_URL}
+      - REACT_APP_API_URL=${REACT_APP_API_URL}
+      - REACT_APP_TRACKING_CODE=${REACT_APP_TRACKING_CODE}
+    depends_on:
+      - zsbserver
+      #  - zsbcdngo
+      - zsbcdnrust
+  zsbserver:
+    image: ${DOCKERHUB_USERNAME}/zsbserver:latest
+    build: ./server-go
+    ports:
+      - "5001:5001"
+    depends_on:
+      - zsbdatabase
+      - zsbredis
+    networks:
+      - fullstack
+    restart: on-failure
+    environment:
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - MAIN_APP_URL=${MAIN_APP_URL}
+      - EMAIL=${EMAIL}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - JWT_SIGNATURE=${JWT_SIGNATURE}
+  zsbdatabase:
+    container_name: zsbdatabase
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    networks:
+      - fullstack
+    restart: on-failure
+  zsbphpmyadmin:
+    container_name: zsbphpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - "4000:80"
+    networks:
+      - fullstack
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      PMA_HOST: "host.docker.internal"
+    restart: on-failure
+    depends_on:
+      - zsbdatabase
+  zsbredis:
+    container_name: zsbredis
+    image: redis:latest
+    restart: on-failure
+    networks:
+      - fullstack
+    expose:
+      - "6379"
+    ports:
+      - "6379:6379"
+  # zsbcdngo:
+  #  container_name: zsbcdngo
+  #  build: ./cdn-go
+  #  ports:
+  #    - "5002:5002"
+  #  networks:
+  #    - fullstack
+  #  restart: on-failure
+  #  depends_on:
+  #    - zsbftp
+  zsbcdnrust:
+    image: ${DOCKERHUB_USERNAME}/zsbcdnrust:latest
+    build:
+      context: .
+      dockerfile: ./cdn-rust/Dockerfile
+    ports:
+      - "5002:5002"
+    networks:
+      - fullstack
+    restart: on-failure
+    depends_on:
+      - zsbftp
+    volumes:
+      - ./public:/public
+  zsbftp:
+    container_name: zsbftp
+    image: vimagick/vsftpd:latest
+    ports:
+      - "20:20"
+      - "21:21"
+      - "30000-30010:30000-30010"
+    networks:
+      - fullstack
+    restart: on-failure
+
+networks:
+  fullstack:
+    driver: bridge
