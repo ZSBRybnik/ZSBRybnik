@@ -11,7 +11,7 @@ Krzysztof Zawisła
 
 Borys Malinowski
 
-## DevOps
+## DevOps, GitOps
 
 Szymon Przepióra
 
