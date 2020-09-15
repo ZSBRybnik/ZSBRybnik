@@ -3,7 +3,7 @@
 ZSB Rybnik ©  
 ZSB Rybnik Workspace
 
-## Main programmer, designer and project manager
+## Main programmer, DevOps, GitOps, designer and project manager
 
 Krzysztof Zawisła
 
