@@ -38,3 +38,4 @@ public/images/*
 !public/images/silesian-technical-university.png
 !public/images/wst-logo.webp
 !public/images/wst-logo.png
+.env

@@ -7,10 +7,10 @@
     "build-dev": "docker-compose -f docker-compose.dev.yml build --parallel",
     "build-production": "docker-compose -f docker-compose.yml build --parallel",
     "build-production-no-cache": "docker-compose -f docker-compose.yml build --no-cache --parallel",
-    "up-dev": "docker-compose -f docker-compose.dev.yml up",
-    "up-dev-detached": "docker-compose -f docker-compose.dev.yml up -d",
-    "up-production": "docker-compose -f docker-compose.yml up",
-    "up-production-detached": "docker-compose -f docker-compose.yml up -d"
+    "up-dev": "docker-compose -f docker-compose.dev.yml -p zsbrybnikdev up",
+    "up-dev-detached": "docker-compose -f docker-compose.dev.yml -p zsbrybnikdev up -d",
+    "up-production": "docker-compose -f docker-compose.yml -p zsbrybnik up",
+    "up-production-detached": "docker-compose -f docker-compose.yml -p zsbrybnik up -d"
   },
   "repository": {
     "type": "git",
