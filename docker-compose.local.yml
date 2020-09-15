@@ -13,13 +13,12 @@ services:
     environment:
       - REACT_APP_CDN_URL=${REACT_APP_CDN_URL}
       - REACT_APP_API_URL=${REACT_APP_API_URL}
-      - REACT_APP_TRACKING_CODE=${REACT_APP_TRACKING_CODE}
     depends_on:
-      - zsbserver
+      - zsbservergo
       #  - zsbcdngo
       - zsbcdnrust
-  zsbserver:
-    container_name: zsbserver
+  zsbservergo:
+    container_name: zsbservergo
     build: ./server-go
     ports:
       - "5001:5001"
@@ -87,8 +86,8 @@ services:
   zsbcdnrust:
     container_name: zsbcdnrust
     build:
-      context: .
-      dockerfile: ./cdn-rust/Dockerfile
+      context: ./cdn-rust
+      dockerfile: ./Dockerfile
     ports:
       - "5002:5002"
     networks:
