@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zsbwebsite
+spec:
+  selector:
+    matchLabels:
+      app: zsbwebsite
+  template:
+    metadata:
+      labels:
+        app: zsbwebsite
+    spec:
+      containers:
+        - name: zsbwebsite
+          image: docker.pkg.github.com/zsbrybnik/website/zsbwebsite:latest
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5000
+      imagePullSecrets:
+        - name: github
