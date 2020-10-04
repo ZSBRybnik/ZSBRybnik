@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   watchtower:
-    image: v2tec/watchtower
+    image: v2tec/watchtower:latest
     container_name: watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
