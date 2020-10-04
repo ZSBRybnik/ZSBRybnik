@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 services:
   zsbwebsite:
     container_name: zsbwebsite
@@ -13,6 +13,8 @@ services:
     restart: on-failure
     volumes:
       - ./website:/website
+      - /website/node_modules
+      - /website/build
     depends_on:
       - zsbserver
       #  - zsbcdngo
@@ -30,7 +32,7 @@ services:
     restart: on-failure
   zsbdatabase:
     container_name: zsbdatabase
-    image: mysql:latest
+    image: mariadb:latest
     ports:
       - 3306:3306
     environment:
@@ -77,9 +79,7 @@ services:
   #    - zsbftp
   zsbcdnrust:
     container_name: zsbcdnrust
-    build:
-      context: .
-      dockerfile: ./cdn-rust/Dockerfile
+    build: ./cdn-rust
     ports:
       - "5002:5002"
     networks:
@@ -91,13 +91,19 @@ services:
       - ./public:/public
   zsbftp:
     container_name: zsbftp
-    image: vimagick/vsftpd:latest
+    image: fauria/vsftpd:latest
+    environment:
+      PASV_ADDRESS: 127.0.0.1
+      PASV_MIN_PORT: 21100
+      PASV_MAX_PORT: 21110
     ports:
-      - "20:20"
       - "21:21"
-      - "30000-30010:30000-30010"
+      - "20:20"
+      - "21100-21110:21100-21110"
     networks:
       - fullstack
+    volumes:
+      - ./public:/home/vsftpd/admin
     restart: on-failure
 
 networks:

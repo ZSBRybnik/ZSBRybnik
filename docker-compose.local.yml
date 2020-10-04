@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 services:
   zsbwebsite:
     container_name: zsbwebsite
@@ -15,8 +15,12 @@ services:
       - REACT_APP_API_URL=${REACT_APP_API_URL}
     depends_on:
       - zsbservergo
-      #  - zsbcdngo
       - zsbcdnrust
+      #  - zsbcdngo
+    volumes:
+      - ./website:/website
+      - /website/node_modules
+      - /website/build
   zsbservergo:
     container_name: zsbservergo
     build: ./server-go
@@ -38,7 +42,7 @@ services:
       - JWT_SIGNATURE=${JWT_SIGNATURE}
   zsbdatabase:
     container_name: zsbdatabase
-    image: mysql:latest
+    image: mariadb:latest
     ports:
       - 3306:3306
     environment:
@@ -47,6 +51,8 @@ services:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
     networks:
       - fullstack
+    volumes:
+      - ./mysql-data:/var/lib/mysql
     restart: on-failure
   zsbphpmyadmin:
     container_name: zsbphpmyadmin
@@ -99,13 +105,19 @@ services:
       - ./public:/public
   zsbftp:
     container_name: zsbftp
-    image: vimagick/vsftpd:latest
+    image: fauria/vsftpd:latest
+    environment:
+      PASV_ADDRESS: 127.0.0.1
+      PASV_MIN_PORT: 21100
+      PASV_MAX_PORT: 21110
     ports:
-      - "20:20"
       - "21:21"
-      - "30000-30010:30000-30010"
+      - "20:20"
+      - "21100-21110:21100-21110"
     networks:
       - fullstack
+    volumes:
+      - ./public:/home/vsftpd/admin
     restart: on-failure
 
 networks:

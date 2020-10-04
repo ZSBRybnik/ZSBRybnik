@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 services:
   watchtower:
     image: v2tec/watchtower
@@ -6,10 +6,10 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json
-    command: watchtower docker.pkg.github.com/zsbrybnik/website/zsbwebsite docker.pkg.github.com/zsbrybnik/server-go/zsbservergo:latest docker.pkg.github.com/zsbrybnik/cdn-rust/zsbcdnrust mysql phpmyadmin/phpmyadmin redis vimagick/vsftpd --interval 30
+    command: watchtower docker pull ghcr.io/zsbrybnik/zsbwebsite ghcr.io/zsbrybnik/zsbservergo ghcr.io/zsbrybnik/zsbcdnrust mysql phpmyadmin/phpmyadmin redis fauria/vsftpd --interval 30
     restart: unless-stopped
   zsbwebsite:
-    image: docker.pkg.github.com/zsbrybnik/website/zsbwebsite:latest
+    image: ghcr.io/zsbrybnik/zsbwebsite:latest
     container_name: zsbwebsite
     ports:
       - "5000:5000"
@@ -21,11 +21,11 @@ services:
       - REACT_APP_API_URL=${REACT_APP_API_URL}
     depends_on:
       - zsbservergo
-      #  - zsbcdngo
       - zsbcdnrust
+      #  - zsbcdngo
   zsbservergo:
     container_name: zsbserver
-    image: docker.pkg.github.com/zsbrybnik/server-go/zsbservergo:latest
+    image: ghcr.io/zsbrybnik/zsbservergo:latest
     ports:
       - "5001:5001"
     depends_on:
@@ -44,7 +44,7 @@ services:
       - JWT_SIGNATURE=${JWT_SIGNATURE}
   zsbdatabase:
     container_name: zsbdatabase
-    image: mysql:latest
+    image: mariadb:latest
     ports:
       - 3306:3306
     environment:
@@ -53,6 +53,8 @@ services:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
     networks:
       - fullstack
+    volumes:
+      - ./mysql-data:/var/lib/mysql
     restart: on-failure
   zsbphpmyadmin:
     container_name: zsbphpmyadmin
@@ -91,7 +93,7 @@ services:
   #    - zsbftp
   zsbcdnrust:
     container_name: zsbcdnrust
-    image: docker.pkg.github.com/zsbrybnik/cdn-rust/zsbcdnrust:latest
+    image: ghcr.io/zsbrybnik/zsbcdnrust:latest
     ports:
       - "5002:5002"
     networks:
@@ -103,13 +105,19 @@ services:
       - ./public:/public
   zsbftp:
     container_name: zsbftp
-    image: vimagick/vsftpd:latest
+    image: fauria/vsftpd:latest
+    environment:
+      PASV_ADDRESS: 127.0.0.1
+      PASV_MIN_PORT: 21100
+      PASV_MAX_PORT: 21110
     ports:
-      - "20:20"
       - "21:21"
-      - "30000-30010:30000-30010"
+      - "20:20"
+      - "21100-21110:21100-21110"
     networks:
       - fullstack
+    volumes:
+      - ./public:/home/vsftpd/admin
     restart: on-failure
 
 networks:

@@ -39,3 +39,4 @@ public/images/*
 !public/images/wst-logo.webp
 !public/images/wst-logo.png
 .env
+mysql-data
