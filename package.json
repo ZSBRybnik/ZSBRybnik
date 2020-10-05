@@ -12,7 +12,7 @@
     "up-dev": "docker-compose -f docker-compose.dev.yml -p zsbrybnikdev up",
     "up-dev-detached": "docker-compose -f docker-compose.dev.yml -p zsbrybnikdev up -d",
     "up-remote-production": "docker-compose -f docker-compose.remote.yml -p zsbrybnik up",
-    "up-remote-production-detached": "docker-compose -f docker-compose.remote.yml -p zsbrybnik up",
+    "up-remote-production-detached": "docker-compose -f docker-compose.remote.yml -p zsbrybnik up -d",
     "up-local-production": "docker-compose -f docker-compose.local.yml -p zsbrybnik up",
     "up-local-production-detached": "docker-compose -f docker-compose.local.yml -p zsbrybnik up -d"
   },
