@@ -5,7 +5,7 @@ services:
     container_name: zsbwatchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./config.json:/config.json
+      - ./watchtower/config.json:/config.json
     command: --label-enable --cleanup --interval 300
     restart: always
     labels:
