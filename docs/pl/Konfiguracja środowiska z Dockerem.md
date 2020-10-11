@@ -11,3 +11,9 @@ System windows 10 w wersji 2004 lub wyższej z zainstalowanym WSL 2 oraz jakąś
 ### MacOS
 
 System MacOS z systemem plików APFS 
+
+### Konfiguracja watchtower
+
+```sh
+echo -n 'username:password' | base64
+```
