@@ -1,13 +1,17 @@
-version: "3.7"
+version: "3.8"
 services:
-  watchtower:
-    image: v2tec/watchtower:latest
-    container_name: watchtower
+  zsbwatchtower:
+    image: containrrr/watchtower:latest
+    container_name: zsbwatchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /root/.docker/config.json:/config.json
-    command: watchtower docker pull ghcr.io/zsbrybnik/zsbwebsite ghcr.io/zsbrybnik/zsbservergo ghcr.io/zsbrybnik/zsbcdnrust mysql phpmyadmin/phpmyadmin redis fauria/vsftpd --interval 30
-    restart: unless-stopped
+      - ./config.json:/config.json
+    command: --label-enable --cleanup --interval 300
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - fullstack
   zsbwebsite:
     image: ghcr.io/zsbrybnik/zsbwebsite:latest
     container_name: zsbwebsite
@@ -16,12 +20,15 @@ services:
     networks:
       - fullstack
     restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - REACT_APP_CDN_URL=${REACT_APP_CDN_URL}
       - REACT_APP_API_URL=${REACT_APP_API_URL}
     depends_on:
       - zsbservergo
       - zsbcdnrust
+      - zsbwatchtower
       #  - zsbcdngo
   zsbservergo:
     container_name: zsbserver
@@ -31,9 +38,12 @@ services:
     depends_on:
       - zsbdatabase
       - zsbredis
+      - zsbwatchtower
     networks:
       - fullstack
     restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_NAME=${DATABASE_NAME}
@@ -56,6 +66,10 @@ services:
     volumes:
       - ./mysql-data:/var/lib/mysql
     restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - zsbwatchtower
   zsbphpmyadmin:
     container_name: zsbphpmyadmin
     image: phpmyadmin/phpmyadmin:latest
@@ -69,18 +83,25 @@ services:
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
       PMA_HOST: "host.docker.internal"
     restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - zsbdatabase
+      - zsbwatchtower
   zsbredis:
     container_name: zsbredis
     image: redis:latest
     restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - fullstack
     expose:
       - "6379"
     ports:
       - "6379:6379"
+    depends_on: 
+      - zsbwatchtower
   # zsbcdngo:
   #  container_name: zsbcdngo
   #  build: ./cdn-go
@@ -99,17 +120,24 @@ services:
     networks:
       - fullstack
     restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - zsbftp
+      - zsbwatchtower
     volumes:
       - ./public:/public
   zsbftp:
     container_name: zsbftp
     image: fauria/vsftpd:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     environment:
       PASV_ADDRESS: 127.0.0.1
       PASV_MIN_PORT: 21100
       PASV_MAX_PORT: 21110
+    depends_on:
+      - zsbwatchtower
     ports:
       - "21:21"
       - "20:20"
