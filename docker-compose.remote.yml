@@ -147,6 +147,20 @@ services:
     volumes:
       - ./public:/home/vsftpd/admin
     restart: on-failure
+  zsbvault:
+    container_name: zsbvault
+    image: vault:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - zsbwatchtower
+    networks:
+      - fullstack
+    ports:
+      - "8200:8200"
+    volumes:
+      - ./vault:/vault/file
+    restart: on-failure  
 
 networks:
   fullstack:

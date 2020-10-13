@@ -21,7 +21,11 @@ services:
       - zsbcdnrust
   zsbserver:
     container_name: zsbserver
-    build: ./server-go
+    build:
+      context: ./server-go
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - ./server-go:/server
     ports:
       - "5001:5001"
     depends_on:
