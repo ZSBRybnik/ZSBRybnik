@@ -39,9 +39,9 @@ Jeśli chcemy ułatwić dalszą pracę nad projektem należy doinstalować do Vi
 
 ## Instalacja oprogramowania
 
-XAMPP -> [link](https://www.apachefriends.org/pl/index.html)
-Redis -> [link](https://github.com/microsoftarchive/redis/releases)
-Golang -> [link](https://golang.org/dl/)
-Rust -> [link](https://www.rust-lang.org/tools/install)
-NodeJS -> [link](https://nodejs.org/en/)
+XAMPP -> [link](https://www.apachefriends.org/pl/index.html)  
+Redis -> [link](https://github.com/microsoftarchive/redis/releases)  
+Golang -> [link](https://golang.org/dl/)  
+Rust -> [link](https://www.rust-lang.org/tools/install)  
+NodeJS -> [link](https://nodejs.org/en/)  
 Vault -> [link](https://www.vaultproject.io/downloads) (opcjonalnie)
