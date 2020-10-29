@@ -14,8 +14,8 @@
     "up-remote-production-detached": "docker-compose -f docker-compose.remote.yml -p zsbrybnikremote up -d",
     "up-local-production": "docker-compose -f docker-compose.local.yml -p zsbrybniklocal up",
     "up-local-production-detached": "docker-compose -f docker-compose.local.yml -p zsbrybniklocal up -d",
-    "build-dev-server": "cd server-go && docker build . -f Dockerfile.dev -t zsbserver",
-    "up-dev-server": "cd server-go && docker run -p 5001:5001 -v ${PWD}:/server zsbserver"
+    "build-dev-server-go": "cd server-go && docker build . -f Dockerfile.dev -t zsbservergodev",
+    "up-dev-server-go": "cd server-go && docker run -p 5001:5001 -v ${PWD}:/server zsbservergodev"
   },
   "repository": {
     "type": "git",
